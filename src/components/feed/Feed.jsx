@@ -8,6 +8,7 @@ import YouTubeFeedTile from './YouTubeFeedTile.jsx';
 import '../../feedStyle.css';
 import { useHistory } from 'react-router-dom';
 import { useGoogleLogin } from 'react-google-login';
+import { useGoogleLogout } from 'react-google-login';
 import '../../style.css';
 import Modal from '../modals/Modal.jsx';
 import ModalViewer from '../modals/useModal.jsx'
@@ -31,7 +32,16 @@ var Feed = ({ setIsGoogleSignedIn }) => {
     onFailure: (err) => console.log(err),
   })
 
+  const {signOut} = useGoogleLogout({
+    onLogoutSuccess: (res) => {
+      console.log(res)
+    },
+    clientId: config.clientId,
+    onFailure: (err) => console.log(err)
+  })
+
   var logout = () => {
+    signOut();
     Auth.logout(() => {
       history.push('/');
     })
@@ -45,7 +55,7 @@ var Feed = ({ setIsGoogleSignedIn }) => {
       axios.get(`/getYoutube/${localStorage.access_token}`)
         .then(data => {
           setYoutubeVideos(data);
-          console.log(data.data)
+          console.log(data.data);
         })
         .catch( err => {
           console.error('ERROR RETRIEVING DATA: ', err.stack);

@@ -4,6 +4,7 @@ import config from '../../../env/config.js';
 import Auth from '../Auth.js';
 import { useHistory } from 'react-router-dom';
 import { useGoogleLogin } from 'react-google-login';
+import { useGoogleLogout } from 'react-google-login';
 import { HashRouter as Router, Switch, Route } from 'react-router-dom';
 import Dashboard from './Dashboard/Dashboard.jsx';
 import Sidebar from './Sidebar/Sidebar.jsx';
@@ -30,7 +31,16 @@ const Analytics = ({ setIsGoogleSignedIn }) => {
     onFailure: (err) => console.log(err),
   });
 
+  const {signOut} = useGoogleLogout({
+    onLogoutSuccess: (res) => {
+      console.log(res)
+    },
+    clientId: config.clientId,
+    onFailure: (err) => console.log(err)
+  })
+
   var logout = () => {
+    signOut();
     Auth.logout(() => {
       history.push('/');
     })
